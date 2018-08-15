@@ -7,7 +7,7 @@ class AutoSuggestService
     @documents = load_document
     # @faquestions = Faquestion.all.uniq
     # @faquestions = @faquestions.map{|faq| [faq.id, filter_symbol(faq.question)]}.compact
-    #@documents = fetch_from_redis
+    # @documents = fetch_from_redis
   end
 
   def make_tag term
