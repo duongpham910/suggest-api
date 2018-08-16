@@ -17,31 +17,18 @@ class FaquestionForm extends React.Component {
   }
 
   handleSubmit = () => {
-    // let data = {idea: {title: this.state.title, body: this.state.body}}
-    // $.ajax({
-    //   url: `http://localhost:3001/api/v1/ideas/${this.state.id}`,
-    //   method: 'PATCH',
-    //   data: data,
-    //   success: (response) => {
-    //     console.log(response)
-    //   },
-    //   error: (xhr, status, err) => {
-    //     console.log('false');
-    //   }
-    // });
     let data = {
-      faquestion: {
+      faq: {
         title: this.state.title,
         question: this.state.question,
         answer: this.state.answer,
       }
     }
-    axios({
-      method: 'get',
-      url: 'http://localhost:3001/api/v1/faquestions',
-      data: data
-    }).then(response => {
 
+    axios.get('http://localhost:3001/api/v1/faquestions/suggest_tag', {
+      params: data
+    }).then(response => {
+      console.log(response);
     }).catch(error => {
       console.error(error);
     })
@@ -52,73 +39,39 @@ class FaquestionForm extends React.Component {
       <FormGroup
         controlId="formBasicText"
       >
-        <Grid>
-          <Row className="show-grid">
-            <Col md={2}>
-            </Col>
-            <Col md={8}>
-              <ControlLabel>Title</ControlLabel>
-              <FormControl
-                name="title"
-                type="text"
-                placeholder="Enter text"
-                onChange={this.handleInput}
-              />
-              <FormControl.Feedback />
-              <HelpBlock>Validation is based on string length.</HelpBlock>
-            </Col>
-            <Col md={2}>
-            </Col>
-          </Row>
-          <Row className="show-grid">
-            <Col md={2}>
-            </Col>
-            <Col md={8}>
-              <ControlLabel>Question</ControlLabel>
-              <FormControl
-                name="question"
-                type="text"
-                placeholder="Enter text"
-                onChange={this.handleInput}
-              />
-              <FormControl.Feedback />
-              <HelpBlock>Validation is based on string length.</HelpBlock>
-            </Col>
-            <Col md={2}>
-            </Col>
-          </Row>
-          <Row className="show-grid">
-            <Col md={2}>
-            </Col>
-            <Col md={8}>
-              <ControlLabel>Answer</ControlLabel>
-              <FormControl
-                name="answer"
-                type="text"
-                placeholder="Enter text"
-                onChange={this.handleInput}
-              />
-              <FormControl.Feedback />
-              <HelpBlock>Validation is based on string length.</HelpBlock>
-            </Col>
-            <Col md={2}>
-            </Col>
-          </Row>
-          <Row className="show-grid">
-            <Col md={2}>
-            </Col>
-            <Col md={8}>
-              <Button
-                bsStyle="primary"
-                type="submit"
-                onClick={this.handleSubmit}>
-                Submit
-              </Button>
-            </Col>
-            <Col md={2}>
-            </Col>
-          </Row>
-        </Grid>
+        <ControlLabel>Title</ControlLabel>
+        <FormControl
+          name="title"
+          type="text"
+          placeholder="Enter text"
+          onChange={this.handleInput}
+        />
+        <FormControl.Feedback />
+        <HelpBlock>Validation is based on string length.</HelpBlock>
+        <ControlLabel>Question</ControlLabel>
+        <FormControl
+          name="question"
+          type="text"
+          placeholder="Enter text"
+          onChange={this.handleInput}
+        />
+        <FormControl.Feedback />
+        <HelpBlock>Validation is based on string length.</HelpBlock>
+        <ControlLabel>Answer</ControlLabel>
+        <FormControl
+          name="answer"
+          type="text"
+          placeholder="Enter text"
+          onChange={this.handleInput}
+        />
+        <FormControl.Feedback />
+        <HelpBlock>Validation is based on string length.</HelpBlock>
+        <Button
+          bsStyle="primary"
+          type="submit"
+          onClick={this.handleSubmit}>
+          Submit
+        </Button>
       </FormGroup>
     );
   }
