@@ -2,12 +2,12 @@ class AutoSuggestService
   NOUN = "名詞"
 
   def initialize
-    @faquestions = Faquestion.all.includes(:faquestion_tags)
-    @faquestions = @faquestions.map{|faq| [faq.id, filter_symbol(faq.question)] if faq.faquestion_tags.present?}.compact
-    @documents = load_document
+    # @faquestions = Faquestion.all.includes(:faquestion_tags)
+    # @faquestions = @faquestions.map{|faq| [faq.id, filter_symbol(faq.question)] if faq.faquestion_tags.present?}.compact
+    # @documents = load_document
     # @faquestions = Faquestion.all.uniq
     # @faquestions = @faquestions.map{|faq| [faq.id, filter_symbol(faq.question)]}.compact
-    # @documents = fetch_from_redis
+    @documents = fetch_from_redis
   end
 
   def make_tag term
@@ -28,8 +28,7 @@ class AutoSuggestService
       value = tfidf(doc, @documents, word, hash_term);
       hash_result[word] = {tfidf: value, type: hash_term[word][:type]}
     end
-    #hash_result
-    Hash[hash_result.sort_by{|k,v| v[:tfidf]}]
+    load_highest_score Hash[hash_result.sort_by{|k,v| v[:tfidf]}.reverse]
   end
 
   def build_tag
@@ -143,5 +142,9 @@ class AutoSuggestService
       return hash_n[key][:tfidf] || hash_n[key]["tfidf"]
     end
     return 0
+  end
+
+  def load_highest_score hash_key
+    hash_key.map{|k,v| k if v[:type] == NOUN}.compact.take(5)
   end
 end

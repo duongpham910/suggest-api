@@ -10,7 +10,7 @@ class TagList extends React.Component {
           this.props.tags.map((tag, index) => {
             let style = (index % 2) === 1 ? 'info' : 'warning';
             return (
-              <ListGroupItem bsStyle={style}>{tag}</ListGroupItem>
+              <ListGroupItem key={index} bsStyle={style}>{tag}</ListGroupItem>
             )
           })
         }
