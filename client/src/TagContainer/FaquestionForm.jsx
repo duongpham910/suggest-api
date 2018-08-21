@@ -8,7 +8,7 @@ class FaquestionForm extends React.Component {
     super(props);
     this.state = {
       question: '',
-      tags: [],
+      tags: ['tag1', 'tag2', 'tag3'],
     };
   }
 

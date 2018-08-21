@@ -7,7 +7,8 @@ class AutoSuggestService
     # @documents = load_document
     # @faquestions = Faquestion.all.uniq
     # @faquestions = @faquestions.map{|faq| [faq.id, filter_symbol(faq.question)]}.compact
-    @documents = fetch_from_redis
+    file = File.read("#{Rails.root}/public/corpus/faquestion_corpus.json")
+    @documents = JSON.parse(file)
   end
 
   def make_tag term
