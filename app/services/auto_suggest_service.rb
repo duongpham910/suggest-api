@@ -1,6 +1,11 @@
 class AutoSuggestService
   NOUN = "名詞"
 
+  STOPWORD = %w(これ それ あれ この その あの ここ そこ あそこ こちら どこ だれ なに なん 何
+    私 貴方 貴方方 我々 私達 あの人 あのかた 彼女 彼 です あります おります
+    います は が の に を で え から まで より も どの と し それで しかし)
+
+
   def initialize
     # @faquestions = Faquestion.all.includes(:faquestion_tags)
     # @faquestions = @faquestions.map{|faq| [faq.id, filter_symbol(faq.question)] if faq.faquestion_tags.present?}.compact
@@ -12,6 +17,7 @@ class AutoSuggestService
   end
 
   def make_tag term
+    start = Time.now
     term = filter_symbol term
     nm = Natto::MeCab.new
     doc = []
@@ -23,12 +29,15 @@ class AutoSuggestService
       end
     end
     hash_term[:size_doc] = term.split("").size
+    doc = doc - STOPWORD
 
     hash_result = {}
     doc.each do |word|
       value = tfidf(doc, @documents, word, hash_term);
       hash_result[word] = {tfidf: value, type: hash_term[word][:type]}
     end
+    finish = Time.now
+    puts finish - start
     load_highest_score Hash[hash_result.sort_by{|k,v| v[:tfidf]}.reverse]
   end
 
@@ -57,7 +66,8 @@ class AutoSuggestService
 
   private
   def filter_symbol term
-    term.gsub!(/【|】|「|」|（|）|\"|。|：|『|』|・|｛|｝|／|\.|※|～|(|)/,"")
+    term.gsub(/【|】|「|」|（|）|。|：|『|』|・|｛|｝|／|※|～|？|、|\(|\)|\"|\.|\?
+      |\/|\:|\-|\d+/,"")
   end
 
   def tf doc, term, hash_counter
@@ -77,7 +87,7 @@ class AutoSuggestService
     if n > 0
       return Math.log(docs.size / n.to_f)
     else
-      return return Math.log(docs.size)
+      return Math.log(docs.size)
     end
 
   end
@@ -146,6 +156,6 @@ class AutoSuggestService
   end
 
   def load_highest_score hash_key
-    hash_key.map{|k,v| k if v[:type] == NOUN}.compact.take(5)
+    hash_key.map{|k,v| k if v[:type] == NOUN}.compact.take(10)
   end
 end
