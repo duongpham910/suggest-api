@@ -75,9 +75,9 @@ class AutoSuggestService
       end
     end
     if n > 0
-      return Math.log(docs.size / n.to_f) + 1
+      return Math.log(docs.size / n.to_f)
     else
-      return 1
+      return return Math.log(docs.size)
     end
 
   end
