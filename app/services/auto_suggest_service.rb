@@ -12,7 +12,7 @@ class AutoSuggestService
     # @documents = load_document
     # @faquestions = Faquestion.all.uniq
     # @faquestions = @faquestions.map{|faq| [faq.id, filter_symbol(faq.question)]}.compact
-    file = File.read("#{Rails.root}/public/corpus/faquestion_corpus.json")
+    file = File.read("#{Rails.root}/public/corpus/tag_corpus.json")
     @documents = JSON.parse(file)
   end
 
@@ -77,11 +77,8 @@ class AutoSuggestService
   def idf docs, term
     n = 0
     docs.each do |doc|
-      doc.each do |word|
-        if word.include?(term)
-          n += 1
-          break;
-        end
+      if doc.join("").include?(term)
+        n += 1
       end
     end
     if n > 0
@@ -89,7 +86,6 @@ class AutoSuggestService
     else
       return Math.log(docs.size)
     end
-
   end
 
   def tfidf doc, docs, term, hash_counter
