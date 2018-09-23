@@ -16,14 +16,19 @@ class FaquestionForm extends React.Component {
     this.setState({[e.target.name]: e.target.value})
   }
 
-  handleSubmit = () => {
+  handleSubmit = (type) => {
     let data = {
       faq: {
         question: this.state.question,
       }
     }
 
-    axios.get('http://localhost:3001/api/v1/faquestions/suggest_tag', {
+    let url = 'http://localhost:3001/api/v1/faquestions/suggest_tag'
+    if (type === 'cosine') {
+      url = 'http://localhost:3001/api/v1/faquestions/consine_similarity'
+    }
+
+    axios.get(url, {
       params: data
     }).then(response => {
       this.setState({
@@ -52,8 +57,14 @@ class FaquestionForm extends React.Component {
           <Button
             bsStyle="primary"
             type="submit"
-            onClick={this.handleSubmit}>
+            onClick={() => this.handleSubmit("normal")}>
             Submit
+          </Button>
+          <Button
+            bsStyle="primary"
+            type="submit"
+            onClick={() => this.handleSubmit("cosine")}>
+            Cosine Similarity
           </Button>
         </FormGroup>
         <TagList

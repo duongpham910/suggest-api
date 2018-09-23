@@ -7,13 +7,13 @@ class AutoSuggestService
 
 
   def initialize
-    # @faquestions = Faquestion.all.includes(:faquestion_tags)
-    # @faquestions = @faquestions.map{|faq| [faq.id, filter_symbol(faq.question)] if faq.faquestion_tags.present?}.compact
-    # @documents = load_document
+    @faquestions = Faquestion.all.includes(:faquestion_tags)
+    @faquestions = @faquestions.map{|faq| [faq.id, filter_symbol(faq.question)] if faq.faquestion_tags.present?}.compact
+    @documents = load_document
     # @faquestions = Faquestion.all.uniq
     # @faquestions = @faquestions.map{|faq| [faq.id, filter_symbol(faq.question)]}.compact
-    file = File.read("#{Rails.root}/public/corpus/faquestion_corpus.json")
-    @documents = JSON.parse(file)
+    # file = File.read("#{Rails.root}/public/corpus/faquestion_corpus.json")
+    # @documents = JSON.parse(file)
   end
 
   def make_tag term
@@ -38,7 +38,8 @@ class AutoSuggestService
     end
     finish = Time.now
     puts finish - start
-    load_highest_score Hash[hash_result.sort_by{|k,v| v[:tfidf]}.reverse]
+    #load_highest_score Hash[hash_result.sort_by{|k,v| v[:tfidf]}.reverse]
+    hash_result
   end
 
   def build_tag
@@ -57,11 +58,12 @@ class AutoSuggestService
   def read_corpus hash_tag
     file = File.read("#{Rails.root}/temp.json")
     data_hash = JSON.parse(file)
-    result = []
+    result = {}
     data_hash.each do |tag|
-      result << {tag.keys.first => vector_distance(hash_tag, tag.values[0])}
+      result[tag.keys.first] = vector_distance(hash_tag, tag.values[0])
     end
-    result
+    #result
+    load_cosine_tag Hash[result.sort_by{|k,v| v}.reverse]
   end
 
   private
@@ -157,5 +159,17 @@ class AutoSuggestService
 
   def load_highest_score hash_key
     hash_key.map{|k,v| k if v[:type] == NOUN}.compact.take(10)
+  end
+
+  def load_cosine_tag hash_key
+    faq_ids = hash_key.map{|k,v| k if v > 0.5}.compact.take(10)
+    tag_ids = FaquestionTag.where(faquestion_id: faq_ids).pluck(:tag_id)
+    result = []
+    tag_arr = Tag.where(id: tag_ids).pluck(:name)
+    # faq_arr = Faquestion.where(id: faq_ids).pluck(:question)
+    # faq_arr.each_with_index do |faq, index|
+    #   result << {faq => tag_arr[index]}
+    # end
+    # result
   end
 end
