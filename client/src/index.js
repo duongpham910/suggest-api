@@ -1,5 +1,5 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import TagContainer from "./TagContainer/index";
+import router from "./router";
 
-ReactDOM.render(<TagContainer />, document.getElementById('root') );
+ReactDOM.render(router, document.getElementById('root') );
